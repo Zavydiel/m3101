@@ -1,0 +1,1 @@
+{ unsigned i n t free ; unsigned i n t size ; /∗ ce s champs ne sont pas é c r i t dans l a heap; mais sont a f f e c t é s par get_chunk ∗/; unsigned char * addr ; unsigned char * next_chunk ; unsigned char * previous_chunk ; } chunk ;
