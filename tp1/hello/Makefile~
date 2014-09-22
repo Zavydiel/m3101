@@ -1,0 +1,8 @@
+hello.o: hello.c
+	gcc -c -Wall -Werror hello.c
+
+main.o: hello.c main.c
+	gcc -c -Wall -Werror main.c
+
+hello.exe: hello.o main.o
+	gcc -o hello.exe -Wall -Werror hello.o main.o

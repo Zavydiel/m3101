@@ -1,0 +1,69 @@
+/* int my_strlen(char s[]) */
+/* { */
+/*   int i  = 0; */
+/*   while (s[i] !=0)  */
+/*     i++; */
+/*   return i; */
+/* } */
+#include <stdio.h>
+
+int my_strlen(const char *s)
+{
+  char i = 0;
+  while (*(s + i) != 0)
+    i++;
+  return i;
+}
+
+int my_strcmp(const char *s1, const char *s2)
+{
+  char i = 0;
+  while (*(s1 + i) == *(s2 + i) && *(s1 + i) != 0) 
+    i++;
+  return *(s1 + i) - *(s2 + i);
+}
+
+int my_strcmp2(const char *s1, const char *s2, int n)
+{
+  char i = 0;
+  while (*(s1 + i) == *(s2 + i) && *(s1 + i) != 0 && i < n - 1) 
+    i++;
+  return *(s1 + i) - *(s2 + i);
+}
+
+char *my_strcat(char *s1, char *s2)
+{
+  char i = 0, j = 0;
+  while (*(s1 + i) != 0)
+    i++;
+  
+  while(*(s2 + j) != 0)
+    {
+      *(s1 + i) = *(s2 + j);
+      i++;
+      j++;
+    }
+  return s1;
+}
+
+char *my_strchr(char *s, int c)
+{
+  char i = 0;
+  while (*(s + i) != c && *(s + i) != 0)
+    i++;
+  return (s + i);
+}
+            
+char *my_strstr(char *haystack, char *needle)
+{
+  char needleBeg[] = haystack;
+  int needleLength = my_strlen(needle);
+  while(*needleBeg != 0) 
+    {
+      
+      needleBeg = my_strchr(needleBeg, (int) *needle);
+      if (my_strcmp2(needleBeg, needle, needleLength - 1) == 0)
+	return needleBeg;
+    }
+  return 0;
+}

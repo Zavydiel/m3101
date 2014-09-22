@@ -1,0 +1,7 @@
+struct rat rat_produit(struct rat n1, struct rat n2)
+{
+  struct rat out;
+  out.den = n1.den * n2.den;
+  out.num = n1.num * n2.num;
+  return out;
+}
