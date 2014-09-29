@@ -7,10 +7,20 @@ typedef struct
   unsigned char * previous_chunk ; 
 } chunk ;
 
+unsigned char heap[64];
+
 unsigned int get_int(void *ptr);
 
 void set_int(void *ptr, unsigned int val);
 
 void set_chunk(chunk *c, unsigned char *ptr);
 
-void print_chunk(void *ptr);
+void get_chunk(chunk *c, unsigned char *ptr);
+
+void print_chunk(chunk *c);
+
+void init_alloc();
+
+void print_memory();
+
+void *my_alloc(unsigned int size);
