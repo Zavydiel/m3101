@@ -2,8 +2,7 @@
 #include "fct.h"
 
 int main()
-{
-  
+{  
   /*chunk c2;
   void *ptr;
   chunk c = {42, 4, NULL, NULL, NULL};
@@ -18,8 +17,11 @@ int main()
   get_chunk(&c2, ptr);
   print_chunk(&c2);*/
   
-  print_memory();
   init_alloc();
+  print_memory();
+  my_alloc(1);
+  print_memory();
+  my_alloc(11);
   print_memory();
   return 0;
 }

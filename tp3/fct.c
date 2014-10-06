@@ -28,19 +28,19 @@ void get_chunk(chunk *c, unsigned char *ptr)
   else
     c->previous_chunk = ptr - get_int(ptr - sizeof(unsigned int));
 
-  if (ptr + get_int(ptr + sizeof(unsigned int)) >= &heap[sizeof(heap) - 1])
+  if (ptr + c->size >= &heap[sizeof(heap) - 1])
     c->next_chunk = NULL;
   else
-    c->next_chunk = ptr + get_int(ptr + sizeof(unsigned int)) + sizeof(unsigned int);
+    c->next_chunk = ptr + c->size;
 }
 
 void print_chunk(chunk *c)
 {
-  printf("free: %d\n", c->free);
-  printf("size: %d\n", c->size);
-  printf("addr: %p\n", c->addr);
-  printf("next: %p\n", c->next_chunk);
-  printf("previous: %p\n", c->previous_chunk);
+  printf("free: %d\t", c->free);
+  printf("size: %d\t", c->size);
+  printf("addr: %p\t", c->addr);
+  printf("next: %p\t", c->next_chunk);
+  printf("prev: %p\n", c->previous_chunk);
 }
 
 void init_alloc()
@@ -51,17 +51,62 @@ void init_alloc()
 
 void print_memory()
 {
-  int i;
+  /*int i;
   for (i=0; i < sizeof(heap); i++)
     {
       printf("%d ", heap[i]);
+      if ((i+1)%4 == 0) 
+	printf("%c ", '|');
     }
-  printf("\n");
+    printf("\n");*/
+
+  chunk tmp;
+  chunk* current = &tmp;
+ 
+  get_chunk(current, (unsigned char*) &heap);
+  print_chunk(current);
+
+  while (current->next_chunk != NULL)
+    {
+      get_chunk(current, current->next_chunk);
+      print_chunk(current);
+    }
+  printf("---------------------------------------------------------\n");
 }
 
 void *my_alloc(unsigned int size) 
 {
-  chunk *current = get_chunk((*void) &heap); 
+  int actual_size = size + 3 * sizeof(unsigned int); 
+  chunk tmp;
+  chunk *current = &tmp;
+  chunk new, new_remains;
 
-  return NULL;
+  get_chunk(current, (unsigned char*) &heap);
+  while (current->free !=1 && current->size < actual_size)
+    {
+      if (current->next_chunk == NULL)
+	return NULL;
+      get_chunk(current, current->next_chunk);
+    }
+  
+  if (current->size - actual_size <= 1 + 3*sizeof(unsigned int)) 
+    {
+      new.size = current->size;
+      new_remains.size = 0;
+    }
+  else 
+    {
+      new.size = actual_size;
+      new_remains.size = current->size - actual_size;
+    }  
+
+  new.free = 0;
+  set_chunk(&new, (void*) current->addr);
+  new_remains.free = 1;
+  if (new_remains.size != 0) 
+    {
+      set_chunk(&new_remains, (void*) (current->addr + actual_size));
+    }
+
+  return (void*) current->addr;
 }
