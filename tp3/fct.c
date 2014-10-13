@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "fct.h"
 
+static int initialized = 0;
+
 unsigned int get_int(void *ptr)
 {
   return * (unsigned int*) ptr;
@@ -39,13 +41,15 @@ void print_chunk(chunk *c)
   printf("free: %d\t", c->free);
   printf("size: %d\t", c->size);
   printf("addr: %p\t", c->addr);
-  printf("next: %p\t", c->next_chunk);
-  printf("prev: %p\n", c->previous_chunk);
+  printf("prev: %p\t", c->previous_chunk);
+  printf("next: %p\n", c->next_chunk);
 }
 
 void init_alloc()
 {
   chunk c = {1, sizeof(heap), &heap[0], NULL, NULL};
+  if (initialized != 0) return;
+  initialized = 42;
   set_chunk(&c, (void*) &heap);
 }
 
@@ -63,29 +67,37 @@ void print_memory()
   chunk tmp;
   chunk* current = &tmp;
  
+  printf("-----------------------------------------------------------------------------------\n");
+  
   get_chunk(current, (unsigned char*) &heap);
   print_chunk(current);
 
-  while (current->next_chunk != NULL)
-    {
+  while (current->next_chunk != NULL) {      
       get_chunk(current, current->next_chunk);
       print_chunk(current);
     }
-  printf("---------------------------------------------------------\n");
+  printf("-----------------------------------------------------------------------------------\n");
 }
 
-void *my_alloc(unsigned int size) 
-{
+void *malloc(size_t size) 
+{  
   int actual_size = size + 3 * sizeof(unsigned int); 
   chunk tmp;
   chunk *current = &tmp;
   chunk new, new_remains;
 
+  init_alloc();
+
+  printf("malloc(%ld)\n", size);
+
   get_chunk(current, (unsigned char*) &heap);
-  while (current->free !=1 && current->size < actual_size)
+  while (current->free !=1 || current->size < actual_size)
     {
       if (current->next_chunk == NULL)
-	return NULL;
+	{
+	  printf("Pas assez de place");
+	  return NULL;
+	}
       get_chunk(current, current->next_chunk);
     }
   
@@ -107,6 +119,43 @@ void *my_alloc(unsigned int size)
     {
       set_chunk(&new_remains, (void*) (current->addr + actual_size));
     }
+  printf("%p\n", (void*) (current->addr + 2 * sizeof(unsigned int)));
 
-  return (void*) current->addr;
+  return (void*) (current->addr + 2 * sizeof(unsigned int));
+}
+
+void free(void *ptr) {
+  char* p = (char*) ptr - 2 * sizeof(unsigned int);
+  chunk current;
+  chunk prev;
+  chunk next;
+
+  
+  if (ptr == NULL) return;
+
+  printf("free(%p)\n", ptr);
+  init_alloc();
+
+  get_chunk(&current, (void*) p);
+  if (current.previous_chunk != NULL) 
+    {
+      get_chunk(&prev, (void*) current.previous_chunk);
+      if (prev.free != 0) 
+	{
+	  prev.size += current.size;
+	  set_chunk(&prev, prev.addr);
+	  get_chunk(&current, prev.addr);
+	}
+    }
+  if (current.next_chunk != NULL) 
+    {
+      get_chunk(&next, (void*) current.next_chunk);
+      if (next.free != 0) 
+	{
+	  current.size += next.size;
+	  set_chunk(&current, current.addr);
+	}
+    }
+
+  set_int((void*) p, 1);
 }

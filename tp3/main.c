@@ -3,6 +3,9 @@
 
 int main()
 {  
+  void *ptr;
+  void *ptr2;
+  
   /*chunk c2;
   void *ptr;
   chunk c = {42, 4, NULL, NULL, NULL};
@@ -19,9 +22,16 @@ int main()
   
   init_alloc();
   print_memory();
-  my_alloc(1);
+  malloc(1);
   print_memory();
-  my_alloc(11);
+  ptr  = malloc(11);
+  print_memory();
+  free(ptr);
+  print_memory();
+  ptr = malloc(2);
+  ptr2 = malloc(4);
+  free(ptr);
+  free(ptr2);
   print_memory();
   return 0;
 }

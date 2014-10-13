@@ -7,7 +7,7 @@ typedef struct
   unsigned char * previous_chunk ; 
 } chunk ;
 
-unsigned char heap[64];
+unsigned char heap[50000000];
 
 unsigned int get_int(void *ptr);
 
@@ -23,4 +23,6 @@ void init_alloc();
 
 void print_memory();
 
-void *my_alloc(unsigned int size);
+void *malloc(size_t size);
+
+void free(void *ptr);
