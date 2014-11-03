@@ -79,7 +79,7 @@ void print_memory()
   printf("-----------------------------------------------------------------------------------\n");
 }
 
-void *malloc(size_t size) 
+void *my_malloc(size_t size) 
 {  
   int actual_size = size + 3 * sizeof(unsigned int); 
   chunk tmp;
@@ -124,7 +124,7 @@ void *malloc(size_t size)
   return (void*) (current->addr + 2 * sizeof(unsigned int));
 }
 
-void free(void *ptr) {
+void my_free(void *ptr) {
   char* p = (char*) ptr - 2 * sizeof(unsigned int);
   chunk current;
   chunk prev;
@@ -158,4 +158,24 @@ void free(void *ptr) {
     }
 
   set_int((void*) p, 1);
+}
+
+void *my_realloc(void *ptr, size_t size)
+{
+  int i;
+  char *p = my_malloc(size);
+  char *old = ptr;
+  printf("realloc(%ld)\n", size);
+
+  if (ptr == NULL)
+    return p;
+
+  my_free(ptr);
+
+  for (i = 0; i < size; i++)
+    {
+      p[i] = old[i];
+    }
+  
+  return p;
 }

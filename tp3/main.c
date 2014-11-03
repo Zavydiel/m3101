@@ -5,6 +5,7 @@ int main()
 {  
   void *ptr;
   void *ptr2;
+  int i;
   
   /*chunk c2;
   void *ptr;
@@ -25,6 +26,7 @@ int main()
   malloc(1);
   print_memory();
   ptr  = malloc(11);
+  malloc(42);
   print_memory();
   free(ptr);
   print_memory();
@@ -32,6 +34,15 @@ int main()
   ptr2 = malloc(4);
   free(ptr);
   free(ptr2);
+  print_memory();
+  ptr2 = malloc(21);
+  realloc(ptr2, 80);
+  print_memory();
+  for (i = 0; i < 87; i++) 
+    {
+      realloc(ptr, 7);
+    }
+
   print_memory();
   return 0;
 }
