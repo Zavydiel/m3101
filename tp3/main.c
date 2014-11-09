@@ -23,27 +23,28 @@ int main()
   
   init_alloc();
   print_memory();
-  malloc(1);
+  my_malloc(1);
   print_memory();
-  ptr  = malloc(11);
-  malloc(42);
+  ptr  = my_malloc(11);
+  my_malloc(42);
   print_memory();
-  free(ptr);
+  my_free(ptr);
   print_memory();
-  ptr = malloc(2);
-  ptr2 = malloc(4);
-  free(ptr);
-  free(ptr2);
+  ptr = my_malloc(2);
+  ptr2 = my_malloc(4);
+  my_free(ptr);
+  my_free(ptr2);
   print_memory();
-  ptr2 = malloc(21);
-  realloc(ptr2, 80);
+  ptr2 = my_malloc(21);
+  my_realloc(ptr2, 80);
   print_memory();
+  
   for (i = 0; i < 87; i++) 
     {
-      realloc(ptr, 7);
+      printf("toto\n");
+      my_realloc(ptr, 7);
     }
 
-  print_memory();
+    print_memory();
   return 0;
 }
-
