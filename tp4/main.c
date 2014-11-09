@@ -6,6 +6,8 @@
 #define S_FLAG 1
 #define M_FLAG 2
 
+char flag = 0;
+
 void *dis_malloc(size_t size) 
 {
   return my_malloc(size);
@@ -24,12 +26,8 @@ void *dis_realloc(void *ptr, size_t size)
 char * miroir(const char *s)
 {
   int n = strlen(s);
-  int i;
-
+  int i;  
   char* p = dis_malloc(n + 1);
-  
-  printf("chaine:%s\n", s);
-  printf("taille:%d\n", n);
 
   for (i = 0; i < n; ++i)
     {
@@ -41,34 +39,30 @@ char * miroir(const char *s)
   return p;
 }
 
-char getoptions(int argc, char**  argv, char* string)
+char* getoptions(int argc, char**  argv)
 {
   int i, j, l, str = 0;
-  char flag = 0;
+  char* string = NULL;
   for (i = 1; i < argc; ++i)
     {
       if (argv[i][0] == '-')
 	{
-	  l = strlen(argv[i]);
-	  for (j = 1; j < l; j++) 
-	    {
-	      if (argv[i][j] == 'm')
-		flag |= M_FLAG;
-	      else if (argv[i][j] == 's')
-		flag |= S_FLAG;
-	      else 
-		return 0;
-	    }
+	  if (strchr(argv[i], 'm'))
+	    flag |= M_FLAG;
+
+	  if (strchr(argv[i], 's'))
+	      flag |= S_FLAG;
+
+	  if (flag == 0)
+	    return 0;
 	} 
       else 
-	{
-	  
+	{	  
 	  if (str)
 	    return 0;
 	  
 	  l = strlen(argv[i]);
-	  string = dis_malloc(string, l + 1);
-	  printf("toto:");
+	  string = dis_malloc(l + 1);
 	  for (j = 0; j < l; j++)
 	    {
 	      string[j] = argv[i][j];
@@ -79,29 +73,28 @@ char getoptions(int argc, char**  argv, char* string)
 	  printf("\n");
 	}
     }
-  printf("%s\n", string);
-  return flag;
+  return string;
 }
 
 char *saisie()
 {
   int i = 0;
   int size = 32;
-  char *p;
+  char *p = dis_malloc(32);
   char c;
   
   while (!isspace(c = getchar()))
     {
-      i++;
       if (i >= size) 
 	{
 	  p = dis_realloc(p, size * 2);
 	}
-      p[i - 1] = c;
+      p[i] = c;    
+      i++;
     }
   
-  p = dis_realloc(p, i);
-  
+  p = dis_realloc(p, i + 1);
+  p[i] = 0;
   return p;
 }
 
@@ -113,22 +106,17 @@ void error()
  
 int main(int argc, char**  argv) 
 {
-  /*if( argc > 1)
-    printf("%s\n", miroir(argv[1]));
-
-    printf("%s\n", saisie());*/
-  char* param = dis_malloc(0);
-  char flags;
-  flags = getoptions(argc, argv, param);
-  if (flags == 0) 
+  char* param = getoptions(argc, argv);
+  
+  if (flag == 0) 
     {
       error();
       return 1;
     }
 
-  if (flags & S_FLAG) 
+  if (flag & S_FLAG) 
     {
-      if (strlen(param))
+      if (param != NULL)
 	{
 	  error();
 	  return 1;
@@ -136,7 +124,7 @@ int main(int argc, char**  argv)
       param = saisie();
     }
 
-  if (flags & M_FLAG)
+  if (flag & M_FLAG)
     {
       if (strlen(param) == 0)
 	{
@@ -147,6 +135,6 @@ int main(int argc, char**  argv)
     }
 
     printf("%s\n", param);
-
-  return 0;
+    dis_free(param);
+    return 0;
 }
