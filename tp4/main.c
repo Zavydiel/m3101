@@ -23,10 +23,19 @@ void *dis_realloc(void *ptr, size_t size)
   return my_realloc(ptr, size);
 }
 
-char * miroir(const char *s)
+void copy(char* old, char *new, int length) 
+{
+  int i;
+  for(i = 0; i < length; i++) 
+    {
+      new[i] = old[i];
+    }
+}
+
+char * miroir(char *s)
 {
   int n = strlen(s);
-  int i;  
+  int i;
   char* p = dis_malloc(n + 1);
 
   for (i = 0; i < n; ++i)
@@ -34,8 +43,10 @@ char * miroir(const char *s)
       p[i] = s[n - 1 - i];
     }
 
-  p[i] = 0;
-
+    p[i] = 0;
+  
+    free(s);
+  
   return p;
 }
 
@@ -47,14 +58,27 @@ char* getoptions(int argc, char**  argv)
     {
       if (argv[i][0] == '-')
 	{
-	  if (strchr(argv[i], 'm'))
+	  /* if (strchr(argv[i], 'm'))
 	    flag |= M_FLAG;
 
 	  if (strchr(argv[i], 's'))
 	      flag |= S_FLAG;
 
 	  if (flag == 0)
-	    return 0;
+	  return 0;*/
+	  l = strlen(argv[i]);
+	  for (j = 1; j < l; j++)
+	    {
+	      if (argv[i][j] == 'm')
+		flag |= M_FLAG;
+	      else if (argv[i][j] == 's')
+		flag |= S_FLAG;
+	      else
+		{
+		  flag = 0;
+		  return string;
+		}
+	    }
 	} 
       else 
 	{	  
@@ -87,9 +111,10 @@ char *saisie()
     {
       if (i >= size) 
 	{
-	  p = dis_realloc(p, size * 2);
+	  size *= 2;
+	  p = dis_realloc(p, size);
 	}
-      p[i] = c;    
+      p[i] = c;
       i++;
     }
   
@@ -103,13 +128,13 @@ void error()
   printf("mauvaise utilisation\n");
 }
 
- 
-int main(int argc, char**  argv) 
+int main2(int argc, char**  argv) 
 {
   char* param = getoptions(argc, argv);
   
   if (flag == 0) 
     {
+      dis_free(param);
       error();
       return 1;
     }
@@ -118,6 +143,7 @@ int main(int argc, char**  argv)
     {
       if (param != NULL)
 	{
+	  dis_free(param);
 	  error();
 	  return 1;
 	}
@@ -128,6 +154,7 @@ int main(int argc, char**  argv)
     {
       if (strlen(param) == 0)
 	{
+	  dis_free(param);
 	  error();
 	  return 1;
 	}
@@ -137,4 +164,13 @@ int main(int argc, char**  argv)
     printf("%s\n", param);
     dis_free(param);
     return 0;
+}
+
+int main(int argc, char **argv)
+{
+  /*int i = 0;
+    for(i = 0 ; i < 1000 ; i++)*/
+    while(1)
+    main2(argc, argv);
+  return 0;
 }
