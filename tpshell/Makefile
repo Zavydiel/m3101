@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Werror -pedantic -g -ansi
+CFLAGS = -Wall -Werror -pedantic -g
 SRC = $(wildcard *.c)
 OBJ = $(patsubst %.c, %.o, $(SRC))
 
