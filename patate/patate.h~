@@ -1,0 +1,1 @@
+int obtenir_valeur_aleatoire(int borne_superieure);

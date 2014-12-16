@@ -1,0 +1,10 @@
+#include <stdio.h>
+
+#include "patate.h"
+
+int main(int argc, char** argv)
+{
+  lancer_patate(1, 8);
+
+  return 0;
+}
